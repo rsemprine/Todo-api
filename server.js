@@ -13,10 +13,12 @@ app.get('/', function(req, res){
 	res.send('Todo API root');
 });
 
+//GET /todos
 app.get('/todos', function(req, res){
 	res.json(todos);
 });
 
+//GET /todos/:id
 app.get('/todos/:id', function(req, res){
 	var todoId = parseInt(req.params.id, 10);
 	var matchedTodo = _.findWhere(todos, {id: todoId}); //utilizando library underscore
@@ -28,6 +30,7 @@ app.get('/todos/:id', function(req, res){
 	}	
 });
 
+//POST /todos
 app.post('/todos', function(req, res){
 	//Faz com que o objeto só tenha os campos que desejamos
 	var body = _.pick(req.body, 'description', 'completed'); 
@@ -44,6 +47,19 @@ app.post('/todos', function(req, res){
 	res.json(body);
 });
 
+//DELETE /todos/:id
+app.delete('/todos/:id', function(req, res){
+	var todoId = parseInt(req.params.id, 10);
+	var matchedTodo = _.findWhere(todos, {id: todoId});
+
+	if (!matchedTodo) {
+		res.status(404).json({"error": "no todo found with that id"});
+	} else {
+		//remove todos os objeto de 'todos' que estiverem em 'matchedTodo'
+		todos = _.without(todos, matchedTodo); 
+		res.json(todos);
+	}
+});
 
 app.listen(PORT, function(){
 	console.log('Express listening on port ' + PORT);
