@@ -1,5 +1,6 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var _ = require('underscore');
 
 var app = express();
 var PORT = process.env.PORT || 3000;
@@ -18,13 +19,7 @@ app.get('/todos', function(req, res){
 
 app.get('/todos/:id', function(req, res){
 	var todoId = parseInt(req.params.id, 10);
-	var matchedTodo;
-
-	todos.forEach(function(todo){
-		if (todoId === todo.id){
-				matchedTodo = todo;
-			}
-	});
+	var matchedTodo = _.findWhere(todos, {id: todoId}); //utilizando library underscore
 
 	if (matchedTodo) {
 		res.json(matchedTodo);	
@@ -35,6 +30,11 @@ app.get('/todos/:id', function(req, res){
 
 app.post('/todos', function(req, res){
 	var body = req.body;
+
+	if (!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0) {
+		return res.status(404).send();
+	}
+
 	body.id = todoNextId++; //seta o valor depois incrementa
 
 	todos.push(body);
