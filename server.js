@@ -57,9 +57,11 @@ app.delete('/todos/:id', function(req, res){
 	} else {
 		//remove todos os objeto de 'todos' que estiverem em 'matchedTodo'
 		todos = _.without(todos, matchedTodo); 
-		res.json(todos);
+		res.json(matchedTodo);
 	}
 });
+
+
 
 app.listen(PORT, function(){
 	console.log('Express listening on port ' + PORT);
