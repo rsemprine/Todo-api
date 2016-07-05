@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
+var db = require('./db.js');
 
 var app = express();
 var PORT = process.env.PORT || 3000;
@@ -58,16 +59,22 @@ app.post('/todos', function(req, res) {
 	//Faz com que o objeto só tenha os campos que desejamos
 	var body = _.pick(req.body, 'description', 'completed');
 
-	if (!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0) {
-		return res.status(404).send();
-	}
+	//if (!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0) {
+	//	return res.status(404).send();
+	//}
 
-	body.description = body.description.trim();
-	body.id = todoNextId++; //seta o valor depois incrementa
+	//body.description = body.description.trim();
+	//body.id = todoNextId++; //seta o valor depois incrementa
 
-	todos.push(body);
+	//todos.push(body);
 
-	res.json(body);
+	//res.json(body);
+	
+	db.todo.create(body).then(function(todo){
+		res.json(todo.toJSON());
+	}, function(e){
+		res.status(400).json(e);
+	});
 });
 
 //DELETE /todos/:id
@@ -117,6 +124,8 @@ app.put('/todos/:id', function(req, res) {
 	res.json(matchedTodo);
 });
 
-app.listen(PORT, function() {
-	console.log('Express listening on port ' + PORT);
+db.sequelize.sync().then(function() {
+	app.listen(PORT, function() {
+		console.log('Express listening on port ' + PORT);
+	});
 });
