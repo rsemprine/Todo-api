@@ -14,7 +14,8 @@ app.get('/', function(req, res){
 });
 
 //GET /todos
-//GET /todos?completed=true
+//GET /todos?completed=trueOrFalse
+//GET /todos?q=work
 app.get('/todos', function(req, res){
 	var queryParams = req.query;
 	var filteredTodos = todos;
@@ -23,6 +24,12 @@ app.get('/todos', function(req, res){
 		filteredTodos = _.findWhere(filteredTodos, {completed: true});
 	} else if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'false') {
 		filteredTodos = _.findWhere(filteredTodos, {completed: false});
+	}
+
+	if (queryParams.hasOwnProperty('q') && queryParams.q.length > 0) {
+		filteredTodos = _.filter(filteredTodos, function(todo){
+			return todo.description.toLowerCase().indexOf(queryParams.q.toLowerCase()) > -1; //retorna a posição da string
+		});
 	}
 
 	res.json(filteredTodos);
