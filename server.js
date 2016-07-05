@@ -43,15 +43,15 @@ app.get('/todos', function(req, res) {
 //GET /todos/:id
 app.get('/todos/:id', function(req, res) {
 	var todoId = parseInt(req.params.id, 10);
-	var matchedTodo = _.findWhere(todos, {
-		id: todoId
-	}); //utilizando library underscore
-
-	if (matchedTodo) {
-		res.json(matchedTodo);
-	} else {
-		res.status(404).send(); //Not found
-	}
+	db.todo.findById(todoId).then(function(todo){
+		if(!!todo) {
+			res.json(todo.toJSON());
+		} else {
+			res.status(404).send();
+		}
+	}, function(e){
+		res.status(500).send();
+	});
 });
 
 //POST /todos
@@ -59,17 +59,6 @@ app.post('/todos', function(req, res) {
 	//Faz com que o objeto só tenha os campos que desejamos
 	var body = _.pick(req.body, 'description', 'completed');
 
-	//if (!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0) {
-	//	return res.status(404).send();
-	//}
-
-	//body.description = body.description.trim();
-	//body.id = todoNextId++; //seta o valor depois incrementa
-
-	//todos.push(body);
-
-	//res.json(body);
-	
 	db.todo.create(body).then(function(todo){
 		res.json(todo.toJSON());
 	}, function(e){
@@ -80,19 +69,16 @@ app.post('/todos', function(req, res) {
 //DELETE /todos/:id
 app.delete('/todos/:id', function(req, res) {
 	var todoId = parseInt(req.params.id, 10);
-	var matchedTodo = _.findWhere(todos, {
-		id: todoId
-	});
 
-	if (!matchedTodo) {
-		res.status(404).json({
-			"error": "no todo found with that id"
-		});
-	} else {
-		//remove todos os objeto de 'todos' que estiverem em 'matchedTodo'
-		todos = _.without(todos, matchedTodo);
-		res.json(matchedTodo);
-	}
+	db.todo.findById(todoId).then(function(todo){
+		if(!!todo) {
+			res.json(todo.toJSON());
+		} else {
+			res.status(404).send();
+		}
+	}, function(e){
+		res.status(500).send();
+	});
 });
 
 // PUT /todos/:id
