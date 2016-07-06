@@ -14,6 +14,7 @@ app.get('/', function(req, res) {
 	res.send('Todo API root');
 });
 
+//--------------------------TODO--------------------------------
 //GET /todos
 //GET /todos?completed=trueOrFalse
 //GET /todos?q=work
@@ -118,8 +119,10 @@ app.put('/todos/:id', function(req, res) {
 	});
 });
 
+//END----------------------TODO--------------------------------
 
 //--------------------------USER--------------------------------
+//POST /users
 app.post('/users', function(req,res){
 	var body = _.pick(req.body, 'email', 'password');
 
@@ -129,7 +132,7 @@ app.post('/users', function(req,res){
 		res.status(400).json(e);
 	})
 });
-//--------------------------USER--------------------------------
+//END-----------------------USER--------------------------------
 
 db.sequelize.sync().then(function() {
 	app.listen(PORT, function() {
