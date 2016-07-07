@@ -123,18 +123,20 @@ app.put('/todos/:id', function(req, res) {
 
 //--------------------------USER--------------------------------
 //POST /users
-app.post('/users', function(req,res){
+app.post('/users', function(req, res) {
 	var body = _.pick(req.body, 'email', 'password');
 
-	db.user.create(body).then(function(user){
-		res.json(user.toJSON());
-	}, function(e){
+	db.user.create(body).then(function(user) {
+		res.json(user.toPublicJSON());
+	}, function(e) {
 		res.status(400).json(e);
 	})
 });
 //END-----------------------USER--------------------------------
 
-db.sequelize.sync().then(function() {
+db.sequelize.sync({
+	//force: true
+}).then(function() {
 	app.listen(PORT, function() {
 		console.log('Express listening on port ' + PORT);
 	});
